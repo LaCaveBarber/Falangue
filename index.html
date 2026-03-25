@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#070a14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Falangue">
+<meta name="description" content="Anglais courant + Business + Allemand — Erasmus Ready">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Falangue</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070a14;--s1:#0d1120;--s2:#121828;--s3:#192035;
+  --b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.11);
+  --tx:#eef0f8;--mu:#5a6282;--mu2:#8892b0;
+  --en:#4cc9f0;--en2:#4361ee;
+  --de:#f72585;--de2:#b5179e;
+  --st:#a855f7;--st2:#7c3aed;
+  --go:#ffd166;--gr:#06d6a0;--or:#fb8500;
+  --r:16px;--rs:10px;
+  --fh:'Fraunces',serif;--fb:'Plus Jakarta Sans',sans-serif;
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--fb);background:var(--bg);color:var(--tx);overflow-x:hidden;overscroll-behavior:none;min-height:100vh}
+/* AUTH */
+#auth{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px}
+#auth.hide{display:none}
+.auth-logo{width:76px;height:76px;border-radius:20px;margin-bottom:16px;box-shadow:0 0 40px rgba(76,201,240,.3)}
+.auth-title{font-family:var(--fh);font-size:1.9rem;font-weight:900;color:var(--en);margin-bottom:3px}
+.auth-sub{color:var(--mu2);font-size:.82rem;margin-bottom:28px;text-align:center;line-height:1.5}
+.auth-tabs{display:flex;background:var(--s2);border-radius:var(--rs);padding:4px;margin-bottom:18px;width:100%;max-width:320px}
+.at{flex:1;padding:9px;border:none;background:none;color:var(--mu2);font-family:var(--fb);font-weight:700;font-size:.86rem;border-radius:7px;cursor:pointer;transition:all .2s}
+.at.on{background:var(--en2);color:#fff;box-shadow:0 4px 14px rgba(67,97,238,.3)}
+.auth-form{width:100%;max-width:320px;display:flex;flex-direction:column;gap:9px}
+.auth-inp{width:100%;padding:13px 15px;background:var(--s2);border:1.5px solid var(--b1);border-radius:var(--rs);color:var(--tx);font-family:var(--fb);font-size:.95rem;outline:none;transition:border-color .2s}
+.auth-inp:focus{border-color:var(--en)}
+.auth-inp::placeholder{color:var(--mu)}
+.auth-err{color:var(--de);font-size:.78rem;text-align:center;min-height:16px}
+.auth-forgot{text-align:right;font-size:.75rem;color:var(--mu2);cursor:pointer;text-decoration:underline;margin-top:-3px}
+/* INSTALL BANNER */
+#ib{position:fixed;bottom:calc(78px + var(--sab));left:12px;right:12px;z-index:500;
+  background:linear-gradient(135deg,rgba(67,97,238,.97),rgba(76,201,240,.97));
+  border-radius:14px;padding:13px 15px;display:none;align-items:center;gap:11px;
+  box-shadow:0 16px 40px rgba(76,201,240,.22)}
+.ib-t{flex:1;font-size:.8rem;font-weight:700;color:#fff}
+.ib-t span{display:block;font-weight:400;font-size:.7rem;opacity:.85;margin-top:1px}
+.ibb{padding:7px 13px;border-radius:8px;border:none;cursor:pointer;font-family:var(--fb);font-weight:800;font-size:.78rem}
+.ibb-i{background:#fff;color:var(--en2)}
+.ibb-c{background:rgba(255,255,255,.2);color:#fff}
+/* APP */
+#app{display:none}
+#app.on{display:block}
+.screen{display:none;min-height:100vh;padding-bottom:calc(82px + var(--sab))}
+.screen.on{display:block;animation:fu .25s ease}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* NAV */
+nav{position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(7,10,20,.96);backdrop-filter:blur(24px);
+  border-top:1px solid var(--b1);
+  display:none;justify-content:space-around;align-items:flex-end;
+  padding:10px 0;padding-bottom:calc(10px + var(--sab))}
+nav.on{display:flex}
+.nb{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:2px 7px;color:var(--mu);font-family:var(--fb);font-size:.52rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:color .2s}
+.nb svg{width:20px;height:20px}
+.nb.on{color:var(--en)}
+.nb.on svg{filter:drop-shadow(0 0 6px rgba(76,201,240,.55))}
+.nb.stn.on{color:var(--st)}
+.nb.stn.on svg{filter:drop-shadow(0 0 6px rgba(168,85,247,.55))}
+/* COMMON */
+.ph{padding:calc(50px + var(--sat)) 18px 14px;background:linear-gradient(180deg,var(--s1),transparent)}
+.ph h1{font-family:var(--fh);font-size:1.7rem;font-weight:900;line-height:1.2}
+.ph p{color:var(--mu2);font-size:.8rem;margin-top:3px}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:17px;margin:0 13px 11px}
+.chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:.64rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.c-en{background:rgba(76,201,240,.1);color:var(--en);border:1px solid rgba(76,201,240,.22)}
+.c-de{background:rgba(247,37,133,.1);color:var(--de);border:1px solid rgba(247,37,133,.22)}
+.c-st{background:rgba(168,85,247,.12);color:var(--st);border:1px solid rgba(168,85,247,.28)}
+.c-go{background:rgba(255,209,102,.1);color:var(--go);border:1px solid rgba(255,209,102,.22)}
+.c-gr{background:rgba(6,214,160,.1);color:var(--gr);border:1px solid rgba(6,214,160,.22)}
+.track{height:6px;background:var(--s3);border-radius:10px;overflow:hidden}
+.fill{height:100%;border-radius:10px;transition:width 1s ease}
+.f-en{background:linear-gradient(90deg,var(--en2),var(--en))}
+.f-de{background:linear-gradient(90deg,var(--de2),var(--de))}
+.f-st{background:linear-gradient(90deg,var(--st2),var(--st))}
+.f-go{background:linear-gradient(90deg,var(--or),var(--go))}
+.f-gr{background:linear-gradient(90deg,#059669,var(--gr))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:14px 20px;border-radius:var(--rs);border:none;cursor:pointer;font-family:var(--fb);font-weight:800;font-size:.9rem;transition:all .2s;-webkit-user-select:none;user-select:none}
+.btn:active{transform:scale(.97)}
+.b-en{background:linear-gradient(135deg,var(--en2),var(--en));color:#fff;box-shadow:0 8px 24px rgba(76,201,240,.2)}
+.b-full{width:100%}
+.sh{font-weight:800;font-size:.88rem;padding:0 17px;margin:15px 0 8px;display:flex;align-items:center;gap:6px}
+.toast{position:fixed;top:calc(16px + var(--sat));left:50%;transform:translateX(-50%) translateY(-90px);background:var(--s2);border:1px solid var(--b2);border-radius:24px;padding:8px 18px;z-index:9998;font-weight:800;font-size:.86rem;pointer-events:none;transition:transform .4s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 16px 48px rgba(0,0,0,.5);white-space:nowrap}
+.toast.in{transform:translateX(-50%) translateY(0)}
+/* HOME */
+.hero{margin:0 13px 11px;padding:18px;border-radius:var(--r);background:linear-gradient(135deg,rgba(67,97,238,.26),rgba(76,201,240,.1));border:1px solid rgba(76,201,240,.16);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-35px;right:-35px;width:120px;height:120px;background:radial-gradient(circle,rgba(76,201,240,.16),transparent 70%)}
+.hero-lbl{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--en);margin-bottom:4px}
+.hero-t{font-family:var(--fh);font-size:1.1rem;font-weight:900}
+.hero-s{font-size:.76rem;color:var(--mu2);margin-top:2px;margin-bottom:11px}
+.kpi-row{display:flex;gap:8px;padding:0 13px;margin-bottom:4px}
+.kpi{flex:1;background:var(--s1);border:1px solid var(--b1);border-radius:var(--rs);padding:11px 7px;text-align:center}
+.kpi-v{font-family:var(--fh);font-size:1.35rem;font-weight:900;line-height:1}
+.kpi-l{font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mu);margin-top:3px}
+.daily{margin:5px 13px 11px;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.daily-hd{padding:13px 15px 9px;border-bottom:1px solid var(--b1)}
+.daily-t{font-family:var(--fh);font-weight:900;font-size:.93rem}
+.daily-s{font-size:.71rem;color:var(--mu);margin-top:2px}
+.task{display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1px solid var(--b1);cursor:pointer;transition:background .15s;-webkit-user-select:none}
+.task:last-child{border-bottom:none}
+.task:active{background:var(--s2)}
+.t-ic{width:35px;height:35px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
+.t-info{flex:1}
+.t-name{font-weight:700;font-size:.84rem}
+.t-meta{font-size:.66rem;color:var(--mu);margin-top:1px}
+.t-xp{font-family:var(--fh);font-weight:900;font-size:.78rem;color:var(--go)}
+.hsc{display:flex;gap:9px;padding:0 13px 11px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.hsc::-webkit-scrollbar{display:none}
+.mc{flex:0 0 130px;scroll-snap-align:start;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:14px 12px;cursor:pointer;transition:all .2s}
+.mc:active{transform:scale(.97)}
+.mc-ic{font-size:1.4rem;margin-bottom:7px}
+.mc-t{font-weight:800;font-size:.76rem;line-height:1.3}
+.mc-c{font-size:.63rem;color:var(--mu);margin-top:2px}
+.mc-bar{margin-top:7px}
+/* LEARN */
+.ltabs{display:flex;gap:6px;padding:0 13px;margin-bottom:13px}
+.lt{flex:1;padding:9px 5px;border-radius:var(--rs);border:1.5px solid var(--b1);background:var(--s1);cursor:pointer;font-family:var(--fb);font-weight:800;font-size:.76rem;color:var(--mu2);transition:all .2s;text-align:center}
+.lt.e{background:rgba(76,201,240,.1);border-color:rgba(76,201,240,.35);color:var(--en)}
+.lt.d{background:rgba(247,37,133,.1);border-color:rgba(247,37,133,.35);color:var(--de)}
+.fc-wrap{padding:0 13px}
+.fc-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:.72rem;color:var(--mu)}
+.fc-meta b{color:var(--go);font-family:var(--fh)}
+.flashcard{height:230px;perspective:1000px;cursor:pointer;margin-bottom:8px;-webkit-user-select:none}
+.fc-in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.flashcard.fl .fc-in{transform:rotateY(180deg)}
+.fc-f,.fc-b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r);border:1px solid var(--b1);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:22px 18px}
+.fc-f{background:var(--s1)}
+.fc-b{background:var(--s2);border-color:var(--b2);transform:rotateY(180deg)}
+.fc-word{font-family:var(--fh);font-size:1.85rem;font-weight:900;text-align:center;line-height:1.1}
+.fc-hint{font-size:.68rem;color:var(--mu)}
+.fc-ipa{font-size:.85rem;color:var(--en);letter-spacing:.04em}
+.fc-tr{font-family:var(--fh);font-size:1.3rem;font-weight:700;color:var(--go);text-align:center}
+.fc-ex{font-size:.74rem;color:var(--mu2);text-align:center;line-height:1.6;font-style:italic}
+.fc-tap{text-align:center;font-size:.66rem;color:var(--mu);margin-bottom:7px}
+.fc-btns{display:flex;gap:7px}
+.fcb{flex:1;padding:11px 4px;border-radius:var(--rs);border:none;cursor:pointer;font-family:var(--fb);font-weight:800;font-size:.76rem;transition:all .15s}
+.fcb:active{transform:scale(.95)}
+.fcb-n{background:rgba(239,69,101,.1);color:#ef4565;border:1px solid rgba(239,69,101,.28)}
+.fcb-h{background:rgba(255,209,102,.09);color:var(--go);border:1px solid rgba(255,209,102,.28)}
+.fcb-o{background:rgba(6,214,160,.1);color:var(--gr);border:1px solid rgba(6,214,160,.28)}
+.rule{margin:0 13px 9px;padding:14px;background:var(--s1);border-radius:var(--r);border-left:3px solid var(--en)}
+.rule.de{border-color:var(--de)}
+.rule-t{font-weight:800;font-size:.86rem;margin-bottom:5px}
+.rule-b{font-size:.77rem;color:var(--mu2);line-height:1.65}
+.rule-e{margin-top:8px;padding:7px 10px;background:var(--s3);border-radius:7px;font-size:.74rem;font-style:italic;color:var(--en);line-height:1.6}
+.rule.de .rule-e{color:var(--de)}
+/* STREET */
+.st-hero{margin:0 13px 13px;padding:17px;border-radius:var(--r);background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(168,85,247,.1));border:1px solid rgba(168,85,247,.22)}
+.st-hero-lbl{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--st);margin-bottom:3px}
+.st-hero-t{font-family:var(--fh);font-size:1.05rem;font-weight:900}
+.st-hero-s{font-size:.76rem;color:var(--mu2);margin-top:3px;line-height:1.5}
+.st-tip{margin:0 13px 12px;padding:12px 14px;background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.18);border-radius:var(--rs)}
+.st-tip-t{font-weight:800;font-size:.82rem;color:var(--st);margin-bottom:4px}
+.st-tip-b{font-size:.76rem;color:var(--mu2);line-height:1.6}
+.stcats{display:flex;gap:6px;padding:0 13px;overflow-x:auto;margin-bottom:13px}
+.stcats::-webkit-scrollbar{display:none}
+.stc{flex-shrink:0;padding:6px 12px;border-radius:20px;border:1px solid var(--b1);background:var(--s1);cursor:pointer;font-size:.72rem;font-weight:800;color:var(--mu2);white-space:nowrap;transition:all .2s}
+.stc.on{background:rgba(168,85,247,.12);border-color:rgba(168,85,247,.35);color:var(--st)}
+.st-card{margin:0 13px 9px;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;cursor:pointer;-webkit-user-select:none}
+.st-card:active{background:var(--s2)}
+.st-hd{padding:13px 15px 10px;display:flex;justify-content:space-between;align-items:flex-start;gap:9px}
+.st-phrase{font-family:var(--fh);font-size:1.1rem;font-weight:900;color:var(--st);line-height:1.2;flex:1}
+.st-bd{padding:11px 15px;display:none;border-top:1px solid var(--b1)}
+.st-card.open .st-bd{display:block}
+.st-meaning{font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:4px}
+.st-fr{font-size:.78rem;color:var(--mu2);margin-bottom:9px;font-style:italic}
+.st-exs{display:flex;flex-direction:column;gap:5px;margin-bottom:9px}
+.st-ex{padding:7px 10px;background:var(--s2);border-radius:7px;border-left:3px solid var(--st)}
+.st-en{font-size:.78rem;color:var(--tx);font-style:italic;line-height:1.45}
+.st-fr2{font-size:.72rem;color:var(--mu2);margin-top:2px;line-height:1.4}
+.st-warn{font-size:.72rem;color:var(--de);background:rgba(247,37,133,.07);border-radius:6px;padding:6px 9px;border:1px solid rgba(247,37,133,.18)}
+/* QUIZ */
+.qcat{display:flex;gap:5px;padding:0 13px;overflow-x:auto}
+.qcat::-webkit-scrollbar{display:none}
+.qct{flex-shrink:0;padding:6px 11px;border-radius:20px;border:1px solid var(--b1);background:var(--s1);cursor:pointer;font-size:.72rem;font-weight:800;color:var(--mu2);white-space:nowrap;transition:all .2s}
+.qct.on{background:rgba(76,201,240,.1);border-color:rgba(76,201,240,.35);color:var(--en)}
+.qhdr{padding:0 13px;margin:11px 0 14px}
+.qbar-r{display:flex;justify-content:space-between;font-size:.72rem;color:var(--mu);margin-bottom:5px}
+.qscore{color:var(--go);font-family:var(--fh);font-weight:900}
+.qq{font-family:var(--fh);font-size:1.1rem;font-weight:700;line-height:1.45;padding:0 13px;margin-bottom:14px}
+.qopts{display:flex;flex-direction:column;gap:7px;padding:0 13px}
+.qo{padding:12px 14px;background:var(--s1);border:1.5px solid var(--b1);border-radius:var(--rs);cursor:pointer;font-size:.84rem;text-align:left;font-family:var(--fb);color:var(--tx);transition:all .2s;line-height:1.4}
+.qo:active{background:var(--s2)}
+.qo.ok{border-color:var(--gr);background:rgba(6,214,160,.09);color:var(--gr)}
+.qo.ko{border-color:#ef4565;background:rgba(239,69,101,.07);color:#ff8fa3}
+.qfb{margin:11px 13px 0;padding:11px 13px;border-radius:var(--rs);font-size:.78rem;line-height:1.65;display:none}
+.qfb.on{display:block}
+.qfb.g{background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.22);color:#7effd4}
+.qfb.b{background:rgba(239,69,101,.05);border:1px solid rgba(239,69,101,.18);color:#ffb3c1}
+/* PROGRESS */
+.lb{margin:0 13px 11px;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.lb-hd{padding:13px 15px 9px;border-bottom:1px solid var(--b1)}
+.lb-ht{font-family:var(--fh);font-weight:900;font-size:.93rem}
+.lb-bd{padding:13px 15px}
+.sk{margin-bottom:11px}
+.sk:last-child{margin-bottom:0}
+.sk-labels{display:flex;justify-content:space-between;font-size:.73rem;margin-bottom:4px}
+.sk-pct{color:var(--mu2);font-weight:700}
+.plan{margin:0 13px 11px;background:var(--s1);border:1px solid rgba(255,209,102,.18);border-radius:var(--r);padding:15px}
+.plan-t{font-family:var(--fh);font-weight:900;color:var(--go);margin-bottom:11px}
+.plan-r{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--b1);font-size:.77rem;line-height:1.5}
+.plan-r:last-child{border-bottom:none;padding-bottom:0}
+.plan-w{font-weight:800;color:var(--en);min-width:64px;padding-top:1px;flex-shrink:0}
+/* PROFILE */
+.pf-hero{text-align:center;padding:calc(42px + var(--sat)) 20px 18px}
+.pf-av{width:76px;height:76px;border-radius:50%;margin:0 auto 12px;background:linear-gradient(135deg,var(--en2),var(--en));display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:1.8rem;font-weight:900;color:#fff;box-shadow:0 0 0 3px var(--bg),0 0 0 5px rgba(76,201,240,.28)}
+.pf-name{font-family:var(--fh);font-size:1.25rem;font-weight:900}
+.pf-mail{color:var(--mu2);font-size:.76rem;margin-top:2px}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 13px;margin:15px 0}
+.sc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rs);padding:13px;text-align:center}
+.sv{font-family:var(--fh);font-size:1.5rem;font-weight:900;line-height:1}
+.sl{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mu);margin-top:3px}
+.lb-item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid var(--b1);transition:background .15s}
+.lb-item:last-child{border-bottom:none}
+.lb-rank{font-family:var(--fh);font-weight:900;font-size:.95rem;width:22px;text-align:center}
+.lb-av{width:35px;height:35px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
+.lb-nm{flex:1;font-weight:600;font-size:.84rem}
+.lb-xp{font-family:var(--fh);font-weight:900;color:var(--go);font-size:.8rem}
+.logout-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;background:rgba(239,69,101,.08);border:1px solid rgba(239,69,101,.2);border-radius:var(--rs);cursor:pointer;color:#ef4565;font-family:var(--fb);font-weight:700;font-size:.86rem;margin:0 13px 20px;transition:all .2s;width:calc(100% - 26px)}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div id="ib">
+  <div>📲</div>
+  <div class="ib-t">Installer Falangue<span>Hors-ligne · Icône bureau · Vraie app</span></div>
+  <button class="ibb ibb-i" id="ib-yes">Installer</button>
+  <button class="ibb ibb-c" id="ib-no">✕</button>
+</div>
+<!-- AUTH -->
+<div id="auth">
+  <img src="icon-192.png" class="auth-logo" alt="Falangue" onerror="this.style.display='none'">
+  <div class="auth-title">Falangue</div>
+  <div class="auth-sub">Anglais courant &amp; Business · Allemand<br>Erasmus Ready 🌍</div>
+  <div class="auth-tabs">
+    <button class="at on" id="at-l" onclick="authTab('login')">Connexion</button>
+    <button class="at" id="at-s" onclick="authTab('signup')">Créer un compte</button>
+  </div>
+  <div class="auth-form">
+    <div id="auth-nw" style="display:none"><input class="auth-inp" id="auth-n" type="text" placeholder="Ton prénom" maxlength="20" autocomplete="given-name"></div>
+    <input class="auth-inp" id="auth-e" type="email" placeholder="Email" autocomplete="email">
+    <input class="auth-inp" id="auth-p" type="password" placeholder="Mot de passe (4 car. min)" autocomplete="current-password">
+    <div class="auth-forgot" id="auth-fg" onclick="forgotPass()">Mot de passe oublié ?</div>
+    <div class="auth-err" id="auth-err"></div>
+    <button class="btn b-en b-full" onclick="authSubmit()" id="auth-btn">Se connecter</button>
+    <div style="text-align:center;font-size:.72rem;color:var(--mu);margin-top:5px">Données stockées localement · Aucun serveur</div>
+  </div>
+</div>
+<!-- APP -->
+<div id="app">
+<!-- HOME -->
+<div class="screen on" id="s-home">
+  <div class="ph" style="padding-bottom:11px">
+    <div style="font-size:.8rem;color:var(--mu2)">Bonjour,</div>
+    <div style="font-family:var(--fh);font-size:1.8rem;font-weight:900" id="h-name">—</div>
+  </div>
+  <div class="hero">
+    <div class="hero-lbl">🎓 Objectif principal</div>
+    <div class="hero-t" id="h-goal">Anglais C1 — Erasmus Août</div>
+    <div class="hero-s" id="h-sub">B2 → C1 · En cours</div>
+    <div class="track"><div class="fill f-en" id="h-prog" style="width:62%"></div></div>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-v" style="color:var(--de)">🔥<span id="kpi-s">7</span></div><div class="kpi-l">Jours</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--go)" id="kpi-x">0</div><div class="kpi-l">XP</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--gr)" id="kpi-w">0</div><div class="kpi-l">Appris</div></div>
+    <div class="kpi"><div class="kpi-v" style="color:var(--st)" id="kpi-st">0</div><div class="kpi-l">Street</div></div>
+  </div>
+  <div class="daily">
+    <div class="daily-hd"><div class="daily-t">⚡ Session — 30 min</div><div class="daily-s">4 exercices · Adapté à ton niveau</div></div>
+    <div class="task" onclick="go('s-learn')"><div class="t-ic" style="background:rgba(76,201,240,.12)">🃏</div><div class="t-info"><div class="t-name">Flashcards SRS</div><div class="t-meta">Vocabulaire Business · 8 cartes</div></div><div class="t-xp">+120 XP</div></div>
+    <div class="task" onclick="go('s-street')"><div class="t-ic" style="background:rgba(168,85,247,.12)">🎤</div><div class="t-info"><div class="t-name">Street English</div><div class="t-meta">Parler comme un natif · 5 expressions</div></div><div class="t-xp">+80 XP</div></div>
+    <div class="task" onclick="go('s-quiz')"><div class="t-ic" style="background:rgba(255,209,102,.1)">🎯</div><div class="t-info"><div class="t-name">Quiz Grammaire</div><div class="t-meta">Present Perfect · 5 questions</div></div><div class="t-xp">+100 XP</div></div>
+    <div class="task" onclick="go('s-learn')"><div class="t-ic" style="background:rgba(247,37,133,.1)">🇩🇪</div><div class="t-info"><div class="t-name">Allemand Survie</div><div class="t-meta">Grüezi &amp; Bases Suisse 🇨🇭</div></div><div class="t-xp">+50 XP</div></div>
+  </div>
+  <div class="sh">📚 Modules</div>
+  <div class="hsc">
+    <div class="mc" onclick="go('s-street')"><div class="mc-ic">🎤</div><div class="mc-t">Street English</div><div class="mc-c">Natif · Courant</div><div class="mc-bar"><div class="track"><div class="fill f-st" style="width:18%"></div></div></div><div style="margin-top:6px"><span class="chip c-st">Nouveau</span></div></div>
+    <div class="mc" onclick="go('s-learn')"><div class="mc-ic">✉️</div><div class="mc-t">Emails Pro</div><div class="mc-c">48 phrases</div><div class="mc-bar"><div class="track"><div class="fill f-en" style="width:45%"></div></div></div><div style="margin-top:6px"><span class="chip c-en">Business</span></div></div>
+    <div class="mc" onclick="go('s-quiz')"><div class="mc-ic">🤝</div><div class="mc-t">Négociation</div><div class="mc-c">32 phrases</div><div class="mc-bar"><div class="track"><div class="fill f-en" style="width:22%"></div></div></div><div style="margin-top:6px"><span class="chip c-en">English</span></div></div>
+    <div class="mc" onclick="go('s-learn')"><div class="mc-ic">🗣️</div><div class="mc-t">Survie CH 🇨🇭</div><div class="mc-c">Deutsch A1</div><div class="mc-bar"><div class="track"><div class="fill f-de" style="width:6%"></div></div></div><div style="margin-top:6px"><span class="chip c-de">Deutsch</span></div></div>
+    <div class="mc"><div class="mc-ic">📊</div><div class="mc-t">Finance</div><div class="mc-c">60 termes</div><div class="mc-bar"><div class="track"><div class="fill f-en" style="width:8%"></div></div></div><div style="margin-top:6px"><span class="chip c-en">English</span></div></div>
+  </div>
+</div>
+<!-- LEARN -->
+<div class="screen" id="s-learn">
+  <div class="ph"><h1>⚡ Flashcards</h1><p>Répétition espacée · SM-2</p></div>
+  <div class="ltabs">
+    <button class="lt e" id="lt-en" onclick="swLang('en')">🇬🇧 English</button>
+    <button class="lt" id="lt-de" onclick="swLang('de')">🇩🇪 Deutsch</button>
+  </div>
+  <div class="fc-wrap">
+    <div class="fc-meta"><span id="fc-ctr">Carte 1/10</span><b>+15 XP/carte ✅</b></div>
+    <div class="flashcard" id="fc" onclick="flipFC()">
+      <div class="fc-in">
+        <div class="fc-f"><span class="chip c-en" id="fc-badge">Business EN</span><div class="fc-word" id="fc-word">—</div><div class="fc-hint">Toucher pour retourner →</div></div>
+        <div class="fc-b"><div class="fc-ipa" id="fc-ipa"></div><div class="fc-tr" id="fc-tr">—</div><div class="fc-ex" id="fc-ex"></div></div>
+      </div>
+    </div>
+    <div class="fc-tap">👆 Touche d'abord, évalue ensuite</div>
+    <div class="fc-btns">
+      <button class="fcb fcb-n" onclick="nxtFC(0)">😬 Raté</button>
+      <button class="fcb fcb-h" onclick="nxtFC(1)">😅 Dur</button>
+      <button class="fcb fcb-o" onclick="nxtFC(3)">✅ OK!</button>
+    </div>
+  </div>
+  <div class="sh" style="margin-top:18px">📐 Règles clés</div>
+  <div class="rule"><div class="rule-t">Present Perfect vs Prétérit</div><div class="rule-b"><b>Present Perfect</b> = action passée avec impact présent (sans date précise). <b>Prétérit</b> = action terminée à un moment précis.</div><div class="rule-e">✓ "We have signed the deal" — résultat actuel<br>✓ "We signed it last Tuesday" — moment précis</div></div>
+  <div class="rule"><div class="rule-t">Conditionnels en Négociation</div><div class="rule-b">Le <b>conditionnel 2</b> permet de proposer sans s'engager — essentiel en négociation business.</div><div class="rule-e">✓ "If you increased the budget, we would deliver faster."</div></div>
+  <div class="rule"><div class="rule-t">⚠️ Faux amis à bannir</div><div class="rule-b">Ces mots grillent immédiatement un non-natif en contexte professionnel.</div><div class="rule-e">Eventually ≠ Éventuellement → = Finalement<br>Actual ≠ Actuel → = Réel / Concret<br>Sensible ≠ Sensible → = Raisonnable<br>Comprehensive ≠ Compréhensif → = Complet</div></div>
+  <div class="rule de"><div class="rule-t">🇨🇭 Grüezi en Suisse alémanique</div><div class="rule-b">"Grüezi" est le salut formel suisse. À l'université de Zürich ou Berne, toujours "Grüezi" avec les profs et les inconnus.</div><div class="rule-e">Grüezi = Formel Suisse 🇨🇭 | Hallo = Informel | Servus = Autrichien ❌</div></div>
+  <div class="rule de"><div class="rule-t">🇩🇪 5 phrases de survie</div><div class="rule-b">Ces 5 phrases te sortent de n'importe quelle situation en Suisse alémanique.</div><div class="rule-e">Entschuldigung → Excusez-moi<br>Wo ist...? → Où est... ?<br>Ich verstehe nicht → Je ne comprends pas<br>Sprechen Sie Englisch? → Parlez-vous anglais ?<br>Danke schön → Merci beaucoup</div></div>
+</div>
+<!-- STREET ENGLISH -->
+<div class="screen" id="s-street">
+  <div class="ph"><h1>🎤 Street English</h1><p>Parler comme un natif · Naturel · Fluide</p></div>
+  <div class="st-hero">
+    <div class="st-hero-lbl">🚫 Le défaut Duolingo &amp; Babbel</div>
+    <div class="st-hero-t">Arrête de sonner comme un manuel scolaire</div>
+    <div class="st-hero-s">Les natifs ne disent jamais "I would like to..." — ils disent "I'd love to...". Maîtrise le vrai anglais parlé : fillers, slang, réductions, idiomes.</div>
+  </div>
+  <div class="st-tip">
+    <div class="st-tip-t">💡 Pourquoi c'est crucial pour Erasmus</div>
+    <div class="st-tip-b">Un C1 académique peut sonner bizarre à l'oral. Quand tu maîtrises les fillers, le slang et les réductions orales, tu passes de "l'étudiant étranger" à "quelqu'un qui a vraiment vécu en anglais". C'est ce que Duolingo ne t'apprendra jamais.</div>
+  </div>
+  <div class="stcats">
+    <button class="stc on" onclick="swSt(this,'fillers')">🗣️ Fillers</button>
+    <button class="stc" onclick="swSt(this,'slang')">🔥 Slang</button>
+    <button class="stc" onclick="swSt(this,'reductions')">🎵 Sons &amp; Réductions</button>
+    <button class="stc" onclick="swSt(this,'idioms')">🧠 Idiomes</button>
+    <button class="stc" onclick="swSt(this,'smalltalk')">☕ Small talk</button>
+  </div>
+  <div id="st-cards"></div>
+</div>
+<!-- QUIZ -->
+<div class="screen" id="s-quiz">
+  <div class="ph"><h1>🎯 Quiz</h1><p>Grammaire · Vocabulaire · Business</p></div>
+  <div class="qcat">
+    <button class="qct on" onclick="swCat(this,'grammar')">📐 Grammaire</button>
+    <button class="qct" onclick="swCat(this,'vocab')">📖 Vocab</button>
+    <button class="qct" onclick="swCat(this,'biz')">💼 Business</button>
+    <button class="qct" onclick="swCat(this,'email')">✉️ Emails</button>
+    <button class="qct" onclick="swCat(this,'de')">🇩🇪 Deutsch</button>
+  </div>
+  <div class="qhdr">
+    <div class="qbar-r"><span id="q-prog">Question 1/5</span><span class="qscore" id="q-score">0 pts</span></div>
+    <div class="track"><div class="fill f-en" id="q-bar" style="width:20%"></div></div>
+  </div>
+  <div class="qq" id="q-txt"></div>
+  <div class="qopts" id="q-opts"></div>
+  <div class="qfb" id="q-fb"></div>
+  <div style="padding:13px;margin-top:5px"><button class="btn b-en b-full" id="q-next" onclick="nxtQ()" style="display:none">Question suivante →</button></div>
+</div>
+<!-- PROGRESS -->
+<div class="screen" id="s-prog">
+  <div class="ph"><h1>📈 Progrès</h1><p>Suivi CECRL · Objectif Erasmus</p></div>
+  <div style="padding:0 13px;margin-bottom:13px;display:flex;gap:7px;flex-wrap:wrap">
+    <span class="chip c-en" style="padding:5px 11px">🇬🇧 B2 → C1</span>
+    <span class="chip c-de" style="padding:5px 11px">🇩🇪 A1 débutant</span>
+    <span class="chip c-st" style="padding:5px 11px">🎤 Street EN</span>
+  </div>
+  <div class="lb">
+    <div class="lb-hd"><div class="lb-ht" style="color:var(--en)">🇬🇧 Anglais</div></div>
+    <div class="lb-bd">
+      <div class="sk"><div class="sk-labels"><span>Grammaire</span><span class="sk-pct">68%</span></div><div class="track"><div class="fill f-en" style="width:68%"></div></div></div>
+      <div class="sk"><div class="sk-labels"><span>Vocabulaire</span><span class="sk-pct">72%</span></div><div class="track"><div class="fill f-en" style="width:72%"></div></div></div>
+      <div class="sk"><div class="sk-labels"><span>Business English</span><span class="sk-pct">38%</span></div><div class="track"><div class="fill f-go" style="width:38%"></div></div></div>
+      <div class="sk"><div class="sk-labels"><span>Street English 🔥</span><span class="sk-pct">22%</span></div><div class="track"><div class="fill f-st" style="width:22%"></div></div></div>
+      <div class="sk"><div class="sk-labels"><span>Expression orale</span><span class="sk-pct">55%</span></div><div class="track"><div class="fill f-en" style="width:55%"></div></div></div>
+      <div class="sk"><div class="sk-labels"><span>Emails Pro</span><span class="sk-pct">42%</span></div><div class="track"><div class="fill f-go" style="width:42%"></div></div></div>
+    </div>
+  </div>
+  <div class="lb">
+    <div class="lb-hd"><div class="lb-ht" style="color:var(--de)">🇩🇪 Allemand</div></div>
+    <div class="lb-bd">
+      <div class="sk"><div class="sk-labels"><span>Salutations</span><span class="sk-pct">15%</span></div><div class="track"><div class="fill f-de" style="width:15%"></div></div></div>
+      <div class="sk"><div class="sk-labels"><span>Vocabulaire courant</span><span class="sk-pct">5%</span></div><div class="track"><div class="fill f-de" style="width:5%"></div></div></div>
+      <div class="sk"><div class="sk-labels"><span>Survie Suisse 🇨🇭</span><span class="sk-pct">8%</span></div><div class="track"><div class="fill f-de" style="width:8%"></div></div></div>
+    </div>
+  </div>
+  <div class="plan">
+    <div class="plan-t">🗓️ Plan Erasmus — Avant Août</div>
+    <div class="plan-r"><div class="plan-w">Sem 1–4</div><div>Grammaire intensive · Faux amis · Street EN bases · SRS quotidien</div></div>
+    <div class="plan-r"><div class="plan-w">Sem 5–8</div><div>Business English · Emails pro · Street EN avancé · Idiomes courants</div></div>
+    <div class="plan-r"><div class="plan-w">Sem 9–12</div><div>Négociation + Finance · Oral fluide sans accent scolaire · C1 objectif</div></div>
+    <div class="plan-r"><div class="plan-w">Sem 13–16</div><div>Révisions C1 · Simulations orales · Test blanc CECRL</div></div>
+    <div class="plan-r"><div class="plan-w">Quotidien</div><div>🇩🇪 5 min Allemand · 🎤 1 expression Street EN par jour</div></div>
+  </div>
+</div>
+<!-- PROFILE -->
+<div class="screen" id="s-prof">
+  <div class="pf-hero">
+    <div class="pf-av" id="pf-av">?</div>
+    <div class="pf-name" id="pf-name">—</div>
+    <div class="pf-mail" id="pf-mail">—</div>
+    <div style="margin-top:8px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+      <span class="chip c-en" id="pf-chip-en">B2 Anglais</span>
+      <span class="chip c-de">A1 Deutsch</span>
+      <span class="chip c-go">🔥 Streak actif</span>
+    </div>
+  </div>
+  <div class="sg">
+    <div class="sc"><div class="sv" style="color:var(--go)" id="pf-xp">0</div><div class="sl">XP Total</div></div>
+    <div class="sc"><div class="sv" style="color:var(--en)" id="pf-words">0</div><div class="sl">Mots appris</div></div>
+    <div class="sc"><div class="sv" style="color:var(--gr)">89%</div><div class="sl">Précision</div></div>
+    <div class="sc"><div class="sv" style="color:var(--st)" id="pf-street">0</div><div class="sl">Street EN</div></div>
+  </div>
+  <div class="sh">🏆 Classement</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="lb-item" style="background:rgba(255,209,102,.04)">
+      <div class="lb-rank" style="color:var(--go)">🥇</div>
+      <div class="lb-av" style="background:rgba(76,201,240,.15);color:var(--en)" id="lb-av-me">?</div>
+      <div class="lb-nm" id="lb-nm-me">—</div>
+      <div class="lb-xp" id="lb-xp-me">0 XP</div>
+    </div>
+    <div class="lb-item"><div class="lb-rank" style="color:#aaa">🥈</div><div class="lb-av" style="background:rgba(247,37,133,.12);color:var(--de)">L</div><div class="lb-nm">Lucas</div><div class="lb-xp">980 XP</div></div>
+    <div class="lb-item"><div class="lb-rank" style="color:#8b6914">🥉</div><div class="lb-av" style="background:rgba(6,214,160,.1);color:var(--gr)">M</div><div class="lb-nm">Manon</div><div class="lb-xp">770 XP</div></div>
+    <div class="lb-item"><div class="lb-rank" style="color:var(--mu)">4</div><div class="lb-av" style="background:var(--s2)">T</div><div class="lb-nm">Thomas</div><div class="lb-xp">510 XP</div></div>
+  </div>
+  <div style="height:13px"></div>
+  <button class="logout-btn" onclick="logout()">🚪 Se déconnecter</button>
+</div>
+</div><!-- /app -->
+<!-- NAV -->
+<nav id="nav">
+  <button class="nb on" onclick="go('s-home')" id="n-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Accueil
+  </button>
+  <button class="nb" onclick="go('s-learn')" id="n-learn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Apprendre
+  </button>
+  <button class="nb stn" onclick="go('s-street')" id="n-street">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Street
+  </button>
+  <button class="nb" onclick="go('s-quiz')" id="n-quiz">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Quiz
+  </button>
+  <button class="nb" onclick="go('s-prof')" id="n-prof">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil
+  </button>
+</nav>
+<script>
+const CARDS={en:[{word:'To leverage',badge:'Business EN',ipa:'/\u02c8lev\u0259r\u026ad\u0292/',tr:'Exploiter / Tirer parti de',ex:'"We need to leverage our strengths in this negotiation."'},{word:'To streamline',badge:'Business EN',ipa:'/\u02c8stri\u02d0mla\u026an/',tr:'Rationaliser / Simplifier',ex:'"We streamlined our processes to cut costs significantly."'},{word:'Stakeholder',badge:'Business EN',ipa:'/\u02c8ste\u026akho\u028ald\u0259r/',tr:'Partie prenante',ex:'"All stakeholders must approve the new strategy."'},{word:'To mitigate',badge:'Vocab C1',ipa:'/\u02c8m\u026at\u026a\u0261e\u026at/',tr:'Att\u00e9nuer / R\u00e9duire (risque)',ex:'"We must mitigate the risks before launching this product."'},{word:'Pursuant to',badge:'Email Pro',ipa:'/p\u0259r\u02c8su\u02d0\u0259nt/',tr:'Conform\u00e9ment \u00e0 / Suite \u00e0',ex:'"Pursuant to our last meeting, I am writing to confirm the terms."'},{word:'Nevertheless',badge:'Grammaire C1',ipa:'/\u02ccnev\u0259r\u00f0\u0259\u02c8les/',tr:'N\u00e9anmoins / Toutefois',ex:'"The results were poor. Nevertheless, the team stayed motivated."'},{word:'To envisage',badge:'Business EN',ipa:'/\u026an\u02c8v\u026az\u026ad\u0292/',tr:'Envisager / Pr\u00e9voir',ex:'"We envisage a 20% growth in revenue next quarter."'},{word:'Eventually',badge:'\u26a0\ufe0f Faux ami',ipa:'/\u026a\u02c8vent\u0283u\u0259li/',tr:'Finalement (\u2260 \u00e9ventuellement)',ex:'"He eventually accepted the offer after weeks of negotiation."'},{word:'Actual',badge:'\u26a0\ufe0f Faux ami',ipa:'/\u02c8\u00e6kt\u0283u\u0259l/',tr:'R\u00e9el / Concret (\u2260 actuel)',ex:'"The actual cost was much higher than the estimate."'},{word:'Sensible',badge:'\u26a0\ufe0f Faux ami',ipa:'/\u02c8sens\u026ab\u0259l/',tr:'Raisonnable (\u2260 sensible)',ex:'"That\'s a sensible approach to the problem." — Pas \u00e9motionnel !'}],de:[{word:'Guten Morgen',badge:'Deutsch A1',ipa:'[ɡuːtən ˈmɔʁɡən]',tr:'Bonjour (matin)',ex:'"Guten Morgen! Wie geht es Ihnen?" — Comment allez-vous ?'},{word:'Grüezi',badge:'Suisse 🇨🇭',ipa:'[ˈɡryːətsi]',tr:'Bonjour (Suisse formel)',ex:'"Grüezi, ich bin Student aus Frankreich." — À utiliser à l\'univ.'},{word:'Entschuldigung',badge:'Survie A1',ipa:'[ɛntˈʃʊldɪɡʊŋ]',tr:'Excusez-moi / Pardon',ex:'"Entschuldigung, wo ist die Universität?" — Où est l\'université ?'},{word:'Ich verstehe nicht',badge:'Survie 🇨🇭',ipa:'[ɪç fɛɐ̯ˈʃteːə nɪçt]',tr:'Je ne comprends pas',ex:'"Können Sie das wiederholen? Ich verstehe nicht."'},{word:'Wo ist...?',badge:'Survie A1',ipa:'[voː ɪst]',tr:'Où est... ?',ex:'"Entschuldigung, wo ist der Bahnhof?" — Où est la gare ?'},{word:'Sprechen Sie Englisch?',badge:'Survie 🇨🇭',ipa:'[ˈʃprɛçən ziː ˈɛŋlɪʃ]',tr:'Parlez-vous anglais ?',ex:'Indispensable en Suisse alémanique !'},{word:'Danke schön',badge:'Deutsch A1',ipa:'[ˈdaŋkə ʃøːn]',tr:'Merci beaucoup',ex:'"Danke schön für Ihre Hilfe!" — Merci pour votre aide !'}]};
+const STREET={fillers:[{phrase:"I mean...",meaning:"Je veux dire / En fait",fr:"Pour reformuler ou préciser sa pensée — ultra courant",exs:[{en:"\"I mean, it's not that I don't like it, it's just... complicated.\"",fr:"\"Je veux dire, c'est pas que j'aime pas, c'est juste... compliqué.\""},{en:"\"She's alright, I mean, she could be nicer but whatever.\"",fr:"\"Elle est correcte, je veux dire, elle pourrait être plus sympa, mais bon.\""}],warn:"Sans 'I mean', tu sonnes rigide. C'est le filler numéro 1 en anglais familier."},{phrase:"You know?",meaning:"Tu vois ? / C'est ce que je veux dire",fr:"Pour vérifier que l'autre suit — ponctue la conversation naturellement",exs:[{en:"\"It's just really frustrating, you know? Like nothing works out.\"",fr:"\"C'est vraiment frustrant, tu vois ? Genre rien ne marche.\""},{en:"\"He's one of those people who just gets it, you know what I mean?\"",fr:"\"C'est le genre de personne qui comprend instinctivement, tu vois ?\""}]},{phrase:"Like...",meaning:"Genre... / Euh... / Comme...",fr:"Filler universel anglophone — ponctue et adoucit n'importe quelle phrase",exs:[{en:"\"It was like, really unexpected, I didn't see it coming at all.\"",fr:"\"C'était genre, vraiment inattendu, j'ai pas du tout vu venir.\""},{en:"\"I was like, are you serious right now?\"",fr:"\"J'étais genre, t'es sérieux là ?\""}],warn:"Très oral. Ne jamais écrire 'like' comme filler dans un email pro !"},{phrase:"To be honest...",meaning:"Honnêtement... / Franchement...",fr:"Pour introduire une opinion directe ou un aveu sincère",exs:[{en:"\"To be honest, I had no idea what was going on.\"",fr:"\"Franchement, j'avais aucune idée de ce qui se passait.\""},{en:"\"To be honest with you, I'm not really into it.\"",fr:"\"Pour être honnête avec toi, c'est pas vraiment mon truc.\""}]},{phrase:"Sort of / Kind of",meaning:"Un peu / Plutôt / Genre",fr:"Pour nuancer ou atténuer ce qu'on dit — rend le discours plus naturel",exs:[{en:"\"It's kind of weird but I actually like it.\"",fr:"\"C'est un peu bizarre mais j'aime bien en fait.\""},{en:"\"I'm sort of tired but I can still go out.\"",fr:"\"Je suis plutôt fatigué mais je peux encore sortir.\""}]},{phrase:"Honestly though",meaning:"Mais honnêtement / Sérieusement",fr:"Variante emphatique — pour une conviction forte en fin de phrase",exs:[{en:"\"Honestly though, it's the best movie I've seen all year.\"",fr:"\"Mais honnêtement, c'est le meilleur film que j'ai vu de l'année.\""}]}],slang:[{phrase:"That's sick / That's fire",meaning:"C'est ouf / C'est incroyable",fr:"Compliment fort — génération Z et millennials anglophones",exs:[{en:"\"Dude, your sneakers are sick!\"",fr:"\"Mec, tes baskets sont trop ouf !\""},{en:"\"This new album is straight fire, I've been listening all day.\"",fr:"\"Ce nouvel album est vraiment incroyable, j'écoute depuis ce matin.\""}],warn:"Contexte informel uniquement. Jamais en entretien ou réunion pro."},{phrase:"No cap",meaning:"Sans mentir / Pour de vrai / Sérieusement",fr:"Assure que ce qu'on dit est totalement vrai — très Gen Z",exs:[{en:"\"No cap, that was the best burger I've ever had.\"",fr:"\"Sans blague, c'était le meilleur burger que j'aie jamais mangé.\""},{en:"\"She's literally the funniest person I know, no cap.\"",fr:"\"Elle est vraiment la personne la plus drôle que je connaisse, sérieusement.\""}]},{phrase:"To ghost someone",meaning:"Ghoster quelqu'un / Disparaître",fr:"Couper tout contact sans prévenir ni expliquer",exs:[{en:"\"He was texting me every day and then just ghosted me completely.\"",fr:"\"Il me texte chaque jour et puis il m'a ghostée du jour au lendemain.\""},{en:"\"She ghosted three interviews this month — so unprofessional.\"",fr:"\"Elle a ghosté trois entretiens ce mois — tellement peu pro.\""}]},{phrase:"To be down for sth",meaning:"Être partant / Être chaud pour",fr:"Exprimer qu'on est disponible et enthousiaste pour quelque chose",exs:[{en:"\"You wanna grab some food? — Yeah, I'm totally down.\"",fr:"\"Tu veux manger un truc ? — Ouais, je suis chaud.\""},{en:"\"I'm down for whatever, just let me know.\"",fr:"\"Je suis partant pour n'importe quoi, dis-moi juste.\""}]},{phrase:"It's a vibe",meaning:"L'ambiance est bonne / Ça a de l'allure",fr:"Pour décrire une atmosphère positive ou un style particulier",exs:[{en:"\"This rooftop bar is such a vibe.\"",fr:"\"Ce bar en rooftop a vraiment de l'ambiance.\""},{en:"\"His whole aesthetic is just a vibe, I love it.\"",fr:"\"Son style global a vraiment quelque chose, j'adore.\""}]},{phrase:"Lowkey / Highkey",meaning:"Assez (lowkey) / Vraiment / Franchement (highkey)",fr:"Nuancer l'intensité d'une affirmation — omniprésent chez les moins de 30 ans",exs:[{en:"\"I'm lowkey obsessed with this show.\"",fr:"\"Je suis assez obsédé par cette série.\""},{en:"\"Highkey the best decision I've ever made.\"",fr:"\"Franchement, la meilleure décision que j'aie jamais prise.\""}]}],reductions:[{phrase:"Gonna / Wanna / Gotta",meaning:"Going to / Want to / Got to (have to)",fr:"Réductions orales universelles — la forme longue sonne bizarre à l'oral",exs:[{en:"\"I'm gonna grab coffee, you wanna come? Gotta be back by 3.\"",fr:"\"Je vais prendre un café, tu veux venir ? Je dois être rentré pour 15h.\""}],warn:"À l'écrit formel, toujours écrire 'going to', 'want to', 'have to'. À l'oral, la forme longue sonne étrange et artificiel."},{phrase:"'Cause / 'Cos",meaning:"Because — parce que",fr:"Réduction orale de 'because' — absolument standard à l'oral",exs:[{en:"\"I didn't go 'cause I was tired, that's all.\"",fr:"\"J'y suis pas allé parce que j'étais fatigué, c'est tout.\""}]},{phrase:"Kinda / Sorta / Lotta",meaning:"Kind of / Sort of / A lot of",fr:"Réductions très courantes pour nuancer ou quantifier",exs:[{en:"\"I'm kinda hungry, sorta want pizza. There's a lotta options nearby.\"",fr:"\"J'ai un peu faim, j'aurais plutôt envie de pizza. Y'a plein d'options près d'ici.\""}]},{phrase:"Lemme / Gimme",meaning:"Let me / Give me",fr:"Contractions orales informelles — entre amis uniquement",exs:[{en:"\"Lemme check that real quick. Gimme a sec.\"",fr:"\"Laisse moi vérifier ça vite fait. Donne-moi une seconde.\""}],warn:"Très informel — entre amis uniquement. Jamais avec des collègues ou supérieurs."},{phrase:"Innit? / Right?",meaning:"N'est-ce pas ? / Non ? / C'est ça ?",fr:"'Innit' = UK urbain. 'Right?' = universel pour vérifier l'accord",exs:[{en:"\"That's mad expensive, innit?\" (UK)   /   \"We leave at 8, right?\"",fr:"\"C'est vachement cher, non ?\"   /   \"On part à 8h, c'est bien ça ?\""}]},{phrase:"Whatcha / Didja / Couldja",meaning:"What are you / Did you / Could you",fr:"Contractions orales rapides — parlé uniquement, très familier",exs:[{en:"\"Whatcha doing tonight? Didja finish the project?\"",fr:"\"Tu fais quoi ce soir ? T'as fini le projet ?\""}],warn:"Extrêmement oral et informel. Ne jamais écrire ces formes."}],idioms:[{phrase:"To cut to the chase",meaning:"Aller droit au but",fr:"Dire qu'on va directement à l'essentiel sans détour",exs:[{en:"\"Let's cut to the chase — are you interested or not?\"",fr:"\"Allons droit au but — t'es intéressé ou pas ?\""},{en:"\"I'll cut to the chase: we need the report by Friday.\"",fr:"\"Je vais directement au but : il nous faut le rapport pour vendredi.\""}]},{phrase:"To be on the same page",meaning:"Être d'accord / Se comprendre",fr:"Vérifier que tout le monde a la même compréhension",exs:[{en:"\"Before we start, let's make sure we're all on the same page.\"",fr:"\"Avant de commencer, vérifions qu'on est tous sur la même longueur d'onde.\""},{en:"\"Are we on the same page about the deadline?\"",fr:"\"On est bien d'accord sur la deadline ?\""}]},{phrase:"To bite the bullet",meaning:"Prendre sur soi / Serrer les dents",fr:"Accepter courageusement une situation difficile inévitable",exs:[{en:"\"I didn't want to call him, but I bit the bullet and did it.\"",fr:"\"Je voulais pas l'appeler, mais j'ai pris sur moi et je l'ai fait.\""}]},{phrase:"To pull someone's leg",meaning:"Faire marcher quelqu'un / Plaisanter",fr:"Dire quelque chose de faux pour rire — blague innocente",exs:[{en:"\"Wait, are you serious? — Relax, I'm just pulling your leg!\"",fr:"\"Attends, t'es sérieux ? — Détends-toi, je te fais marcher !\""}]},{phrase:"To wrap one's head around",meaning:"Comprendre / Assimiler quelque chose de complexe",fr:"Essayer de comprendre quelque chose de difficile mentalement",exs:[{en:"\"I can't wrap my head around why he did that.\"",fr:"\"J'arrive pas à comprendre pourquoi il a fait ça.\""},{en:"\"It's a lot to wrap your head around — give it time.\"",fr:"\"C'est beaucoup à assimiler — laisse-toi du temps.\""}]},{phrase:"To hit the nail on the head",meaning:"Mettre le doigt dessus / Tomber juste",fr:"Dire exactement la bonne chose au bon moment",exs:[{en:"\"That's exactly it! You really hit the nail on the head.\"",fr:"\"C'est exactement ça ! Tu as vraiment mis le doigt dessus.\""}]}],smalltalk:[{phrase:"How's it going?",meaning:"Ça se passe comment ? / Comment ça va ?",fr:"Salutation informelle numéro 1 chez les anglophones",exs:[{en:"\"Hey! How's it going?\" — \"Not bad, pretty busy. You?\"",fr:"\"Hey ! Ça se passe comment ?\" — \"Pas mal, assez occupé. Et toi ?\""}],warn:"'How are you?' sonne formel ou désuet entre jeunes. Les natifs disent 'How's it going?', 'What's up?', 'How are you doing?' — jamais 'How are you?' entre amis."},{phrase:"What's up?",meaning:"Quoi de neuf ? / Ça va ?",fr:"Salutation très informelle — entre amis et pairs",exs:[{en:"\"Hey, what's up?\" — \"Not much, just chilling. You?\"",fr:"\"Hey, quoi de neuf ?\" — \"Pas grand chose, je me détends. Et toi ?\""}]},{phrase:"Fair enough",meaning:"C'est juste / D'accord / Je comprends",fr:"Pour acquiescer sans être enthousiaste — très britannique et naturel",exs:[{en:"\"I can't come tonight, I'm exhausted.\" — \"Fair enough, no worries.\"",fr:"\"Je peux pas venir ce soir, je suis épuisé.\" — \"C'est juste, pas de soucis.\""}]},{phrase:"No worries / No stress",meaning:"Pas de soucis / Aucun problème",fr:"Réponse à une excuse — remplace 'de rien' ou 'pas de problème'",exs:[{en:"\"Sorry for being late!\" — \"No worries at all, we just started.\"",fr:"\"Désolé d'être en retard !\" — \"Pas de soucis du tout, on vient de commencer.\""}]},{phrase:"I'm not gonna lie",meaning:"Je vais pas te mentir / Soyons honnêtes",fr:"Introduit une confidence ou une vérité directe — marque la sincérité",exs:[{en:"\"I'm not gonna lie, that was a bit awkward.\"",fr:"\"Je vais pas te mentir, c'était un peu gênant.\""},{en:"\"I'm not gonna lie, this pizza is incredible.\"",fr:"\"Soyons honnêtes, cette pizza est incroyable.\""}]},{phrase:"Honestly / Genuinely",meaning:"Franchement / Vraiment / Honnêtement",fr:"Pour renforcer une affirmation — marque la sincérité et l'emphase",exs:[{en:"\"Honestly, I've had worse days. It's fine.\"",fr:"\"Franchement, j'ai connu pire. Ça va.\""},{en:"\"I'm genuinely impressed — this is really good work.\"",fr:"\"Je suis vraiment impressionné — c'est vraiment un bon travail.\""}]}]};
+const QUIZ={grammar:[{q:"Choisissez la forme correcte pour commencer un email pro :",opts:["I am writing to you for ask about...","I am writing to enquire about...","I write you because I want to know...","Writing you about this matter..."],c:1,fb:'✅ "I am writing to enquire about..." est LA formule standard. "Enquire" est formel, "to + infinitif" exprime le but. Mémorise-la !'},{q:'Complétez : "We ___ the contract last Tuesday."',opts:["have signed","signed","were signing","are signing"],c:1,fb:"✅ Prétérit simple 'signed' : moment précis terminé ('last Tuesday'). Le Present Perfect s'utilise sans date précise."},{q:'"Eventually" se traduit par :',opts:["Éventuellement","Peut-être","Finalement","Actuellement"],c:2,fb:"✅ PIÈGE CLASSIQUE ! 'Eventually' = Finalement. 'Éventuellement' = 'possibly' en anglais. Le faux ami le plus fréquent !"},{q:"Quelle phrase est correcte en anglais pro ?",opts:["Please find attached my CV for your review.","I join my CV for that you can read it.","My CV is attached for you consult.","I attached my CV in this email."],c:0,fb:'✅ "Please find attached..." est la formule standard incontournable pour les pièces jointes. À mémoriser absolument.'},{q:"Bon connecteur logique pour une présentation :",opts:["Concerning the fact that sales dropped...","With regards for the decrease...","As regards the drop in sales, we should note that...","Related to sales going down..."],c:2,fb:'✅ "As regards..." est une formule formelle parfaite. "Concerning" serait aussi acceptable mais moins élégant.'}],vocab:[{q:'Que signifie "outstanding" dans "outstanding invoice" ?',opts:["Exceptionnel","En attente / Impayé","Urgent","Validé"],c:1,fb:"✅ 'Outstanding' a deux sens : (1) Exceptionnel ('outstanding performance') ; (2) En attente/Impayé ('outstanding invoice'). Le contexte est crucial !"},{q:'"Stakeholders" vs "shareholders" :',opts:["Synonymes","Stakeholders = toutes parties prenantes, Shareholders = actionnaires","Stakeholders = actionnaires, Shareholders = employés","Aucune différence"],c:1,fb:"✅ Stakeholders = TOUTES les parties prenantes (clients, employés, actionnaires...). Shareholders = actionnaires uniquement."},{q:'Traduction de "to implement" :',opts:["Impliquer","Importer","Mettre en œuvre","Impacter"],c:2,fb:"✅ 'To implement' = mettre en œuvre. Très utilisé : 'We will implement the new strategy Q2.' Incontournable en réunions !"},{q:'"Sensible" en anglais signifie :',opts:["Sensible / Émotionnel","Raisonnable / Logique","Sensuel","Délicat"],c:1,fb:"✅ FAUX AMI ! 'Sensible' en anglais = raisonnable/logique. 'She made a very sensible decision.' ≠ Ce qu'on pense en français !"},{q:"KPI signifie :",opts:["Keep Profit Increasing","Key Performance Indicator","Key Product Innovation","Knowledge Process Integration"],c:1,fb:"✅ KPI = Key Performance Indicator = Indicateur Clé de Performance. Tu l'entendras dans CHAQUE réunion business en Erasmus !"}],biz:[{q:'Comment dire "Je vous contacte suite à notre réunion" ?',opts:["I contact you after our meeting.","Further to our meeting, I am writing to follow up on...","I write you because we met.","Following our meeting, I want to say..."],c:1,fb:'✅ "Further to our meeting..." est la formule pro standard pour le suivi. À mémoriser !'},{q:"Façon polie de désaccorder en réunion :",opts:['"No, that is wrong."','"I see your point, however I would argue that..."','"You are mistaken."','"I completely disagree."'],c:1,fb:"✅ En business anglais, on désaccorde TOUJOURS poliment. 'I see your point, however...' reconnaît l'autre avant de contre-argumenter."},{q:"Formule de clôture d'un email pro :",opts:['"Goodbye and thanks"','"I look forward to hearing from you. Kind regards,"','"See you soon. Cheers,"','"Hoping for your response."'],c:1,fb:'✅ "I look forward to hearing from you. Kind regards," est LA clôture standard. "Best regards" est aussi parfait.'},{q:"Comment présenter des chiffres en réunion ?",opts:['"The numbers are going up a lot."','"Sales increased by 23% year-on-year, driven primarily by..."','"We sold more this year."','"The data is positive."'],c:1,fb:"✅ En présentation : toujours chiffrer précisément + expliquer le driver. 'increased by 23% year-on-year, driven by...' = formule parfaite C1."},{q:'"To wrap up" en meeting signifie :',opts:["Emballer un cadeau","Conclure / Résumer pour clore","Commencer","Interrompre"],c:1,fb:"✅ 'Let's wrap up' = 'Concluons / Terminons'. Très utilisé en fin de réunion. 'To recap' = résumer les points clés."}],email:[{q:"Début formel pour quelqu'un qu'on ne connaît pas :",opts:["Hello Mr Smith,","Hey Smith,","To who it may concern,","Dear Mr Smith,"],c:3,fb:"✅ 'Dear Mr/Ms [Nom],' est la formule formelle standard. 'Hello' est acceptable mais moins formel. Jamais 'Hey' dans un email pro !"},{q:"Demande d'information très polie :",opts:["Tell me about the deadline.","I would be grateful if you could provide details regarding the deadline.","Send me the deadline info.","I need to know the deadline ASAP."],c:1,fb:"✅ 'I would be grateful if you could...' = formule très polie parfaite. 'Could you please...' est aussi excellent."},{q:"Signaler une pièce jointe correctement :",opts:["I send you a file.","Please find attached the document for your review.","The file is joined.","See attachment below."],c:1,fb:"✅ 'Please find attached...' est LA formule standard internationale pour les pièces jointes."},{q:'"I am afraid we are unable to accommodate your request" :',opts:["On a peur de votre demande","On refuse poliment votre demande","On accepte sous conditions","On ne comprend pas"],c:1,fb:"✅ 'I am afraid...' est la façon polie de refuser en anglais britannique des affaires. Indispensable pour gérer les refus avec diplomatie !"},{q:"Relancer poliment quelqu'un sans réponse :",opts:['"Why haven\'t you answered?"','"I am writing to kindly follow up on my previous email dated..."','"Answer me please."','"Did you receive my email?"'],c:1,fb:"✅ 'I am writing to kindly follow up on my previous email dated...' est la relance professionnelle parfaite."}],de:[{q:"Salutation formelle en Suisse alémanique :",opts:["Hallo!","Grüezi!","Hey!","Servus!"],c:1,fb:"✅ 'Grüezi' est le salut suisse alémanique formel. À l'université de Zürich/Berne, toujours 'Grüezi' avec les professeurs !"},{q:'"Entschuldigung" signifie :',opts:["Merci","Au revoir","Excusez-moi","S'il vous plaît"],c:2,fb:"✅ 'Entschuldigung' = Excusez-moi / Pardon. Indispensable pour aborder quelqu'un. Raccourci oral : 'Schuldigung'."},{q:'"Parlez-vous anglais ?" en allemand :',opts:["Sprechen Sie Englisch?","Haben Sie Englisch?","Kennen Sie Englisch?","Möchten Sie Englisch?"],c:0,fb:"✅ 'Sprechen Sie Englisch?' = Parlez-vous anglais ? Phrase de survie absolue en Suisse alémanique !"},{q:'"Ich verstehe nicht" signifie :',opts:["Je ne veux pas","Je ne comprends pas","Je ne parle pas","Je ne sais pas"],c:1,fb:"✅ 'Ich verstehe nicht' = Je ne comprends pas. Ajoute 'Können Sie das wiederholen?' (Pouvez-vous répéter ?)."},{q:"Merci formel en allemand :",opts:["Danke","Danke schön","Dankeschön sehr","Herzlichen dank bitte"],c:1,fb:"✅ 'Danke schön' est le merci formel standard. 'Vielen Dank' est aussi très pro. Simple 'Danke' = informel entre amis."}]};
+// AUTH
+let DB={};let currentUser=null;
+function ldb(){try{DB=JSON.parse(localStorage.getItem('flg_db')||'{}');}catch(e){DB={};}}
+function sdb(){try{localStorage.setItem('flg_db',JSON.stringify(DB));}catch(e){}}
+function lsess(){try{const s=localStorage.getItem('flg_sess');if(s){const u=JSON.parse(s);if(DB[u.email]){currentUser=DB[u.email];return true;}}return false;}catch(e){return false;}}
+function ssess(){try{localStorage.setItem('flg_sess',JSON.stringify({email:currentUser.email}));}catch(e){}}
+function csess(){try{localStorage.removeItem('flg_sess');}catch(e){}}
+let amode='login';
+function authTab(m){
+  amode=m;
+  document.getElementById('at-l').classList.toggle('on',m==='login');
+  document.getElementById('at-s').classList.toggle('on',m==='signup');
+  document.getElementById('auth-nw').style.display=m==='signup'?'block':'none';
+  document.getElementById('auth-btn').textContent=m==='login'?'Se connecter':'Créer mon compte';
+  document.getElementById('auth-fg').style.display=m==='login'?'block':'none';
+  document.getElementById('auth-err').textContent='';
+}
+function authSubmit(){
+  const email=(document.getElementById('auth-e').value||'').trim().toLowerCase();
+  const pass=document.getElementById('auth-p').value||'';
+  const name=(document.getElementById('auth-n').value||'').trim();
+  const err=document.getElementById('auth-err');
+  err.textContent='';
+  if(!email||!email.includes('@')){err.textContent='Email invalide.';return;}
+  if(pass.length<4){err.textContent='Mot de passe trop court (4 car. min).';return;}
+  if(amode==='signup'){
+    if(!name){err.textContent='Entre ton prénom.';return;}
+    if(DB[email]){err.textContent='Ce compte existe déjà. Connecte-toi.';return;}
+    DB[email]={email,pass,name,xp:0,words:0,streak:7,street:0,enLevel:'B2',joined:Date.now()};
+    sdb();currentUser=DB[email];
+  } else {
+    if(!DB[email]){err.textContent='Compte introuvable. Crée un compte.';return;}
+    if(DB[email].pass!==pass){err.textContent='Mot de passe incorrect.';return;}
+    currentUser=DB[email];
+  }
+  ssess();launch();
+}
+function forgotPass(){
+  const email=(document.getElementById('auth-e').value||'').trim().toLowerCase();
+  if(!email||!DB[email]){showToast('Entre ton email d\'abord');return;}
+  alert('Ton mot de passe : '+DB[email].pass);
+}
+function logout(){
+  currentUser=null;csess();
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('nav').classList.remove('on');
+  document.getElementById('auth').classList.remove('hide');
+  document.getElementById('auth-e').value='';
+  document.getElementById('auth-p').value='';
+  authTab('login');
+}
+// LAUNCH
+function launch(){
+  document.getElementById('auth').classList.add('hide');
+  document.getElementById('app').classList.add('on');
+  document.getElementById('nav').classList.add('on');
+  applyProfile();loadFC();loadQ();renderStreet('fillers');
+}
+function applyProfile(){
+  const p=currentUser;if(!p)return;
+  const i=p.name[0].toUpperCase();
+  document.getElementById('h-name').textContent=p.name+' 👋';
+  document.getElementById('pf-av').textContent=i;
+  document.getElementById('pf-name').textContent=p.name;
+  document.getElementById('pf-mail').textContent=p.email;
+  document.getElementById('pf-chip-en').textContent=(p.enLevel||'B2')+' Anglais';
+  document.getElementById('lb-av-me').textContent=i;
+  document.getElementById('lb-nm-me').innerHTML=p.name+' <span style="font-size:.66rem;color:var(--mu)">(toi)</span>';
+  ['kpi-x','pf-xp'].forEach(id=>document.getElementById(id).textContent=p.xp||0);
+  ['kpi-w','pf-words'].forEach(id=>document.getElementById(id).textContent=p.words||0);
+  ['kpi-st','pf-street'].forEach(id=>document.getElementById(id).textContent=p.street||0);
+  document.getElementById('kpi-s').textContent=p.streak||7;
+  document.getElementById('lb-xp-me').textContent=(p.xp||0)+' XP';
+}
+function addXP(n,isWord){
+  if(!currentUser)return;
+  currentUser.xp=(currentUser.xp||0)+n;
+  if(isWord)currentUser.words=(currentUser.words||0)+1;
+  DB[currentUser.email]=currentUser;sdb();applyProfile();
+}
+// NAV
+const SCR=['s-home','s-learn','s-street','s-quiz','s-prog','s-prof'];
+const NID=['n-home','n-learn','n-street','n-quiz','n-prog','n-prof'];
+function go(id){
+  SCR.forEach((s,i)=>{
+    document.getElementById(s).classList.toggle('on',s===id);
+    const nb=document.getElementById(NID[i]);
+    if(nb)nb.classList.toggle('on','n-'+id.replace('s-','')=== NID[i]);
+  });
+  window.scrollTo(0,0);
+}
+// FLASHCARDS
+let fcLang='en',fcIdx=0,fcFlipped=false;
+function loadFC(){
+  const c=CARDS[fcLang][fcIdx%CARDS[fcLang].length];
+  document.getElementById('fc-badge').textContent=c.badge;
+  document.getElementById('fc-badge').className='chip '+(fcLang==='en'?'c-en':'c-de');
+  document.getElementById('fc-word').textContent=c.word;
+  document.getElementById('fc-ipa').textContent=c.ipa;
+  document.getElementById('fc-tr').textContent=c.tr;
+  document.getElementById('fc-ex').textContent=c.ex;
+  document.getElementById('fc-ctr').textContent='Carte '+(fcIdx%CARDS[fcLang].length+1)+'/'+CARDS[fcLang].length;
+  fcFlipped=false;document.getElementById('fc').classList.remove('fl');
+}
+function flipFC(){fcFlipped=!fcFlipped;document.getElementById('fc').classList.toggle('fl',fcFlipped);}
+function nxtFC(score){
+  if(!fcFlipped){flipFC();return;}
+  if(score>0){addXP(score===3?15:5,true);showToast(score===3?'✅ +15 XP':'💪 +5 XP');}
+  fcIdx++;loadFC();
+}
+function swLang(lang){
+  fcLang=lang;fcIdx=0;
+  document.getElementById('lt-en').className='lt'+(lang==='en'?' e':'');
+  document.getElementById('lt-de').className='lt'+(lang==='de'?' d':'');
+  loadFC();
+}
+// STREET
+let stCat='fillers';
+function swSt(el,cat){
+  stCat=cat;document.querySelectorAll('.stc').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderStreet(cat);
+}
+function renderStreet(cat){
+  const cards=STREET[cat]||[];
+  const wrap=document.getElementById('st-cards');wrap.innerHTML='';
+  cards.forEach(c=>{
+    const div=document.createElement('div');div.className='st-card';
+    let exsHtml=(c.exs||[]).map(ex=>`<div class="st-ex"><div class="st-en">"${ex.en}"</div><div class="st-fr2">→ ${ex.fr}</div></div>`).join('');
+    div.innerHTML=`<div class="st-hd" onclick="toggleSt(this.parentNode)"><div class="st-phrase">${c.phrase}</div><span class="chip c-st">${c.meaning.split('/')[0].split('(')[0].trim()}</span></div><div class="st-bd"><div class="st-meaning">${c.meaning}</div><div class="st-fr">${c.fr}</div><div class="st-exs">${exsHtml}</div>${c.warn?`<div class="st-warn">⚠️ ${c.warn}</div>`:''}</div>`;
+    wrap.appendChild(div);
+  });
+}
+function toggleSt(card){
+  const wasOpen=card.classList.contains('open');
+  document.querySelectorAll('.st-card.open').forEach(c=>c.classList.remove('open'));
+  if(!wasOpen){
+    card.classList.add('open');
+    if(currentUser){currentUser.street=(currentUser.street||0)+1;DB[currentUser.email]=currentUser;sdb();addXP(10,false);showToast('🎤 +10 XP — Street EN');}
+  }
+}
+// QUIZ
+let qCat='grammar',qIdx=0,qScore=0,qAns=false;
+function loadQ(){
+  const qs=QUIZ[qCat];const q=qs[qIdx%qs.length];
+  document.getElementById('q-txt').textContent=q.q;
+  document.getElementById('q-prog').textContent='Question '+(qIdx%qs.length+1)+'/'+qs.length;
+  document.getElementById('q-score').textContent=qScore+' pts';
+  document.getElementById('q-bar').style.width=((qIdx%qs.length+1)/qs.length*100)+'%';
+  const opts=document.getElementById('q-opts');opts.innerHTML='';
+  q.opts.forEach((o,i)=>{const btn=document.createElement('button');btn.className='qo';btn.textContent=o;btn.onclick=()=>ansQ(i,i===q.c,q);opts.appendChild(btn);});
+  document.getElementById('q-fb').className='qfb';
+  document.getElementById('q-next').style.display='none';
+  qAns=false;
+}
+function ansQ(idx,ok,q){
+  if(qAns)return;qAns=true;
+  document.querySelectorAll('.qo').forEach((o,i)=>{if(i===q.c)o.classList.add('ok');});
+  if(!ok)document.querySelectorAll('.qo')[idx].classList.add('ko');
+  else{qScore+=20;addXP(20,false);showToast('🎯 +20 XP');}
+  const fb=document.getElementById('q-fb');fb.textContent=q.fb;fb.className='qfb on '+(ok?'g':'b');
+  document.getElementById('q-next').style.display='block';
+}
+function nxtQ(){qIdx++;loadQ();}
+function swCat(el,cat){
+  document.querySelectorAll('.qct').forEach(b=>b.classList.remove('on'));el.classList.add('on');
+  qCat=cat;qIdx=0;qScore=0;loadQ();
+}
+// TOAST
+let tTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('in');
+  if(tTimer)clearTimeout(tTimer);tTimer=setTimeout(()=>t.classList.remove('in'),2000);
+}
+// PWA
+let dP=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();dP=e;
+  if(!window.matchMedia('(display-mode: standalone)').matches&&!navigator.standalone)
+    document.getElementById('ib').style.display='flex';
+});
+document.getElementById('ib-yes').onclick=async()=>{
+  if(dP){dP.prompt();const{outcome}=await dP.userChoice;if(outcome==='accepted')showToast('📲 Falangue installé !');dP=null;}
+  else alert('iPhone : ouvre dans Safari → Partager ↑ → "Sur l\'écran d\'accueil" → Ajouter ✓');
+  document.getElementById('ib').style.display='none';
+};
+document.getElementById('ib-no').onclick=()=>{document.getElementById('ib').style.display='none';};
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+// BOOT
+window.addEventListener('DOMContentLoaded',()=>{ldb();if(lsess())launch();});
+</script>
+</body>
+</html>
